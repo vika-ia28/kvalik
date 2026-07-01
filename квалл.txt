@@ -1,0 +1,63 @@
+sudo apt update && sudo apt upgrade -y
+sudo apt install curl wget git vim htop net-tools build-essential nano gedit libreoffice gcc g++ make -y
+sudo apt install openssh-server -y
+sudo systemctl enable --now ssh
+ip a
+ping -c 4 8.8.8.8
+sudo apt install printer-driver-cups-pdf -y
+sudo systemctl restart cups
+lpstat -p
+sudo groupadd developers
+sudo groupadd testers
+sudo groupadd admins
+sudo useradd -m -G developers -s /bin/bash dev1
+sudo passwd dev1
+sudo useradd -m -G testers -s /bin/bash tester1
+sudo passwd tester1
+sudo useradd -m -G admins -s /bin/bash admin1
+sudo passwd admin1
+sudo mkdir /opt/project
+sudo chown :developers /opt/project
+sudo chmod 770 /opt/project
+ls -ld /opt/project
+sudo systemctl enable --now rsyslog
+sudo tail -f /var/log/syslog
+sudo tar -czvf /backup_ubuntu.tar.gz --exclude=/proc --exclude=/sys --exclude=/dev --exclude=/tmp --exclude=/run --exclude=/mnt /
+ls -lh /backup_ubuntu.tar.gz
+lsblk
+sudo dd if=/dev/sda of=/ubuntu_image.img bs=4M status=progress
+ls -lh /ubuntu_image.img
+sudo apt install timeshift -y
+sudo timeshift --create
+sudo timeshift --list
+gsettings set org.gnome.desktop.interface enable-animations false
+gsettings set org.gnome.desktop.interface scaling-factor 1
+echo 'export QT_QPA_PLATFORM=xcb' >> ~/.bashrc
+source ~/.bashrc
+sudo apt install clamav clamav-daemon -y
+sudo freshclam
+echo "======= ПРОВЕРКА ВСЕГО ======="
+echo "1. Интернет:"
+ping -c 2 8.8.8.8
+echo "2. Группы:"
+cat /etc/group | grep -E "developers|testers|admins"
+echo "3. Пользователи:"
+cat /etc/passwd | grep -E "dev1|tester1|admin1"
+echo "4. Права на папку /opt/project:"
+ls -ld /opt/project
+echo "5. Журналы:"
+sudo systemctl status rsyslog | grep active
+echo "6. Резервная копия:"
+ls -lh /backup_ubuntu.tar.gz
+echo "7. Образ системы:"
+ls -lh /ubuntu_image.img
+echo "8. Точки восстановления:"
+sudo timeshift --list
+echo "9. Базовое ПО:"
+nano --version | head -1
+vim --version | head -1
+gedit --version | head -1
+libreoffice --version | head -1
+gcc --version | head -1
+echo "10. Виртуальный принтер:"
+lpstat -p
